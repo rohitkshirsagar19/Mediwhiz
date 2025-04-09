@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediWhiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6a3de8;
+            --secondary-color: #9c59b6;
+            --text-color: #333;
+            --bg-color: #f8f9fa;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        header h1 {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+        .upload-section {
+            margin: 40px 0;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+        #pdf-upload {
+            padding: 10px;
+            border: 2px dashed var(--primary-color);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            background: #f7f4ff;
+        }
+        .btn {
+            padding: 12px 24px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .btn:hover {
+            background: #5931c9;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        .btn-secondary {
+            background: var(--secondary-color);
+        }
+        .btn-secondary:hover {
+            background: #8e44ad;
+        }
+        #upload-status, #api-status {
+            margin-top: 20px;
+            font-size: 1rem;
+        }
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        #summary-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f7f4ff;
+            border-radius: 8px;
+            display: none;
+        }
+        #summary-container h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        .status-success { color: #28a745; }
+        .status-error { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-heartbeat logo-icon"></i> MediWhiz</h1>
+        </div>
+    </header>
+
+    <section class="upload-section">
+        <div class="container">
+            <h2>Upload Your Medical Report</h2>
+            <div class="upload-form">
+                <input type="file" id="pdf-upload" accept="application/pdf">
+                <button class="btn" onclick="uploadPDF()">Upload</button>
+            </div>
+            <div id="upload-status"></div>
+            <div class="action-buttons">
+                <button id="view-pdf-btn" class="btn btn-secondary" style="display: none;" onclick="viewPDF()">View PDF</button>
+                <button id="view-summary-btn" class="btn btn-secondary" style="display: none;" onclick="viewSummary()">View Summary</button>
+            </div>
+            <div id="summary-container">
+                <h3>Summary</h3>
+                <div id="summary-content"></div>
+            </div>
+            <div id="api-status"></div>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Fetch API status on page load
+        fetch('/api/status')
+            .then(response => response.json())
+            .then(data => {
+                const apiStatus = document.getElementById('api-status');
+                if (data.status === 'success') {
+                    apiStatus.innerHTML = `<span class="status-success">${data.message} (v${data.version})</span>`;
+                } else {
+                    apiStatus.innerHTML = '<span class="status-error">API unavailable</span>';
+                }
+            })
+            .catch(error => {
+                document.getElementById('api-status').innerHTML = '<span class="status-error">Error connecting to API</span>';
+                console.error(error);
+            });
+    </script>
+</body>
+</html>

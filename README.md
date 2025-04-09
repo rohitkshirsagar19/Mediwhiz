@@ -38,6 +38,5 @@ MediWhiz is an AI-driven healthcare platform designed to help patients understan
 
 ## Contact
 
-Deepak Shinde  
-Email: deep1904s@gmail.com  
-Phone: 7020310540
+Rohit Kshirsagar 
+Email: rohitkshirsagar1904@gmail.com
